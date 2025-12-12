@@ -603,44 +603,38 @@
     }
 
     function setMode(mode) {
-      currentMode = mode;
+  currentMode = mode;
 
-      const breedBtn = document.getElementById("modeBreedBtn");
-      const diseaseBtn = document.getElementById("modeDiseaseBtn");
-      const badgeText = document.getElementById("badgeText");
-      const aboutBody = document.getElementById("aboutBody");
-      document.getElementById("crossbreedInputs").style.display =
-  mode === "crossbreed" ? "block" : "none";
+  const breedBtn = document.getElementById("modeBreedBtn");
+  const diseaseBtn = document.getElementById("modeDiseaseBtn");
+  const crossBtn = document.getElementById("modeCrossBtn");
+  const badgeText = document.getElementById("badgeText");
+  const aboutBody = document.getElementById("aboutBody");
 
+  // RESET all
+  breedBtn.classList.remove("active");
+  diseaseBtn.classList.remove("active");
+  crossBtn.classList.remove("active");
 
-      if (mode === "breed") {
-        breedBtn.classList.add("active");
-        diseaseBtn.classList.remove("active");
-        badgeText.textContent = "Model Status: Breed model ready";
-        aboutBody.innerHTML =
-          'In <span class="about-highlight">Breed mode</span>, the system uses an EfficientNet-style backbone trained on ' +
-          'Ayrshire, Brown Swiss, Holstein, Jersey, and Red Dane to estimate breed and typical dairy traits. ' +
-          'Switch to <span class="about-highlight">Disease mode</span> to inspect FMD, IBK, and LSD indicators.';
-      } else if (mode === "disease") {
-        diseaseBtn.classList.add("active");
-        breedBtn.classList.remove("active");
-        badgeText.textContent = "Model Status: Disease model ready";
-        aboutBody.innerHTML =
-          'In <span class="about-highlight">Disease mode</span>, a TensorFlow CNN screens cattle images for three key diseases: ' +
-          'Foot-and-Mouth Disease (FMD), Pinkeye (IBK), and Lumpy Skin Disease (LSD). ' +
-          'Switch back to <span class="about-highlight">Breed mode</span> to classify dairy breeds.';
-      } else {
-        document.getElementById("modeCrossBtn").classList.add("active");
-  document.getElementById("modeBreedBtn").classList.remove("active");
-  document.getElementById("modeDiseaseBtn").classList.remove("active");
+  document.getElementById("crossbreedInputs").style.display =
+    mode === "crossbreed" ? "block" : "none";
 
-  document.getElementById("badgeText").textContent =
-    "Model Status: Crossbreed analysis ready";
-      }
+  if (mode === "breed") {
+    breedBtn.classList.add("active");
+    badgeText.textContent = "Model Status: Breed model ready";
+  } 
+  else if (mode === "disease") {
+    diseaseBtn.classList.add("active");
+    badgeText.textContent = "Model Status: Disease model ready";
+  } 
+  else {
+    crossBtn.classList.add("active");
+    badgeText.textContent = "Model Status: Crossbreed analysis ready";
+  }
 
-      const statusEl = document.getElementById("status");
-      statusEl.textContent = "";
-    }
+  document.getElementById("status").textContent = "";
+}
+
 
     function predictCrossbreed() {
   const a = document.getElementById("parentA").files[0];
