@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cattle Breed & Disease Classifier</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,32 +13,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background:
-        radial-gradient(circle at top left, #38bdf8 0, transparent 50%),
-        radial-gradient(circle at bottom right, #22c55e 0, #020617 60%);
-      color: #e5e7eb;
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
+      color: #f1f5f9;
       padding: 24px;
-      transition: background 0.4s ease, color 0.3s ease;
-    }
-
-    body.light {
-      background:
-        radial-gradient(circle at top left, #dbeafe 0, transparent 50%),
-        radial-gradient(circle at bottom right, #bbf7d0 0, #0f172a 60%);
     }
 
     .app-shell {
       width: 100%;
       max-width: 1050px;
-      backdrop-filter: blur(24px);
-      background: rgba(15, 23, 42, 0.82);
+      background: #1e293b;
       border-radius: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow:
-        0 30px 80px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
       padding: 20px 22px 24px;
-      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .header {
@@ -51,14 +39,15 @@
     .title-block { display: flex; flex-direction: column; gap: 4px; }
 
     .app-title {
-      font-size: 26px;
+      font-size: 30px;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: #f9fafb;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    .app-subtitle { font-size: 13px; color: #9ca3af; }
+    .app-subtitle { font-size: 15px; color: #e2e8f0; font-weight: 400; }
 
     .header-right { display: flex; align-items: center; gap: 8px; }
 
@@ -111,9 +100,9 @@
     }
 
     .card {
-      background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.35), transparent 60%);
+      background: #334155;
       border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      border: 1px solid rgba(100, 116, 139, 0.4);
       padding: 14px 14px 16px;
       position: relative;
       overflow: hidden;
@@ -130,36 +119,83 @@
     .card-inner { position: relative; z-index: 1; }
 
     .section-label {
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #9ca3af;
+      color: #e2e8f0;
       margin-bottom: 10px;
+      font-weight: 600;
     }
 
     .input-group {
       border-radius: 14px;
-      border: 1px dashed rgba(148, 163, 184, 0.8);
-      padding: 12px;
-      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      padding: 14px;
+      background: #1e293b;
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin-bottom: 10px;
     }
 
-    .input-label { font-size: 12px; color: #e5e7eb; }
+    .input-label { font-size: 15px; color: #f1f5f9; margin-bottom: 8px; font-weight: 500; }
 
-    #fileInput { font-size: 12px; color: #e5e7eb; }
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border: 2px dashed rgba(191, 219, 254, 0.5);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .file-input-label:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: rgba(191, 219, 254, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+    }
+
+    .file-input-label .file-icon {
+      font-size: 20px;
+    }
+
+    .selected-file {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #60a5fa;
+      text-align: center;
+      font-weight: 500;
+    }
 
     .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 
     .btn {
-      padding: 8px 16px;
+      padding: 10px 18px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.02em;
       display: inline-flex;
@@ -167,16 +203,16 @@
       gap: 6px;
       white-space: nowrap;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: #f9fafb;
+      color: #ffffff;
       box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
       transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
     }
 
     .btn.secondary {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(71, 85, 105, 0.9);
       border: 1px solid rgba(148, 163, 184, 0.8);
-      box-shadow: none;
-      color: #e5e7eb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      color: #ffffff;
     }
 
     .btn[disabled] {
@@ -204,8 +240,8 @@
       margin-top: 10px;
       border-radius: 16px;
       overflow: hidden;
-      background: radial-gradient(circle at center, #020617, #020617);
-      border: 1px solid rgba(15, 23, 42, 0.9);
+      background: #1e293b;
+      border: 1px solid rgba(100, 116, 139, 0.4);
       position: relative;
       min-height: 230px;
       display: flex;
@@ -243,18 +279,20 @@
       border: 1px solid rgba(148, 163, 184, 0.55);
     }
 
-    .camera-status { font-size: 11px; color: #9ca3af; margin-top: 6px; }
+    .camera-status { font-size: 12px; color: #cbd5e1; margin-top: 6px; font-weight: 500; }
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      padding: 5px 10px;
+      font-size: 14px;
+      padding: 8px 14px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      margin-bottom: 8px;
+      background: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.6);
+      margin-bottom: 10px;
+      color: #ffffff;
+      font-weight: 500;
     }
 
     .badge-dot {
@@ -265,9 +303,9 @@
       box-shadow: 0 0 10px #22c55e;
     }
 
-    .breed-name { font-size: 22px; font-weight: 700; color: #f9fafb; }
+    .breed-name { font-size: 26px; font-weight: 700; color: #ffffff; }
 
-    .pred-meta { margin-top: 4px; font-size: 13px; color: #9ca3af; }
+    .pred-meta { margin-top: 4px; font-size: 15px; color: #cbd5e1; }
 
     .confidence { font-weight: 600; color: #f97316; }
 
@@ -284,38 +322,39 @@
     }
 
     .info-block {
-      background: rgba(15, 23, 42, 0.8);
+      background: #1e293b;
       border-radius: 12px;
-      padding: 8px 10px;
-      border: 1px solid rgba(30, 64, 175, 0.7);
+      padding: 10px 12px;
+      border: 1px solid rgba(100, 116, 139, 0.4);
     }
 
     .info-label {
-      font-size: 11px;
-      color: #9ca3af;
+      font-size: 12px;
+      color: #cbd5e1;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       margin-bottom: 2px;
+      font-weight: 500;
     }
 
-    .info-value { font-size: 13px; color: #e5e7eb; }
+    .info-value { font-size: 15px; color: #f1f5f9; font-weight: 400; }
 
     .description {
       margin-top: 10px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       border-radius: 13px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      font-size: 13px;
-      color: #e5e7eb;
-      line-height: 1.5;
+      background: #1e293b;
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      font-size: 15px;
+      color: #e2e8f0;
+      line-height: 1.6;
     }
 
     .description-para-title {
       font-weight: 600;
-      color: #bfdbfe;
-      margin-top: 6px;
-      font-size: 12px;
+      color: #93c5fd;
+      margin-top: 8px;
+      font-size: 14px;
     }
 
     .fun-fact { margin-top: 8px; font-size: 12px; color: #93c5fd; }
@@ -350,12 +389,12 @@
 
     .about {
       margin-top: 10px;
-      padding: 8px 10px;
+      padding: 12px 14px;
       border-radius: 12px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      font-size: 12px;
-      color: #cbd5f5;
+      background: #1e293b;
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      font-size: 14px;
+      color: #e2e8f0;
     }
 
     .about-title {
@@ -387,14 +426,14 @@
     .chip {
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.7);
-      padding: 6px 12px;
-      font-size: 11px;
+      padding: 10px 15px;
+      font-size: 13px;
       background: rgba(15, 23, 42, 0.9);
       color: #e5e7eb;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .chip.active {
@@ -402,6 +441,10 @@
       border-color: rgba(74, 222, 128, 0.9);
       color: #022c22;
       box-shadow: 0 10px 22px rgba(34, 197, 94, 0.5);
+    }
+
+    #cameraCanvas {
+      display: none;
     }
   </style>
 </head>
@@ -413,11 +456,6 @@
         <div class="app-subtitle">AI-powered cattle breed and disease classifier with rich insights.</div>
       </div>
       <div class="header-right">
-        <div class="pill">
-          <span class="pill-dot"></span>
-          <span>Model online · Localhost:8000</span>
-        </div>
-        <button id="themeToggle" class="theme-toggle">🌙 Dark</button>
       </div>
     </div>
 
@@ -429,9 +467,16 @@
 
           <div class="input-group">
             <div class="input-label">Upload an image from your device</div>
-            <input type="file" id="fileInput" accept="image/*">
+            <div class="file-input-wrapper">
+              <input type="file" id="fileInput" accept="image/*" aria-label="Choose an image file for cattle classification" onchange="handleFileSelect()">
+              <label for="fileInput" class="file-input-label">
+                <span class="file-icon">📁</span>
+                <span id="fileInputText">Choose Image File</span>
+              </label>
+            </div>
+            <div id="selectedFileName" class="selected-file"></div>
             <div class="btn-row">
-              <button class="btn" id="predictFileBtn" onclick="uploadFromFile()">
+              <button class="btn" id="predictFileBtn" onclick="uploadFromFile()" disabled>
                 ⚡ Predict from Image
               </button>
             </div>
@@ -440,9 +485,8 @@
           <div class="input-group">
             <div class="input-label">Or use your camera</div>
             <div class="btn-row">
-              <button class="btn secondary" onclick="startCamera()">📷 Start Camera</button>
-              <button class="btn" onclick="captureFromCamera()">🎯 Capture &amp; Predict</button>
-              <button class="btn secondary" onclick="stopCamera()">⛔ Stop</button>
+              <button class="btn secondary" id="cameraBtn" onclick="toggleCamera()">📷 Start Camera</button>
+              <button class="btn" id="captureBtn" onclick="captureFromCamera()" disabled>🎯 Capture &amp; Predict</button>
             </div>
             <div id="cameraStatus" class="camera-status">Camera is idle.</div>
           </div>
@@ -450,7 +494,7 @@
           <div class="preview-shell">
             <div class="preview-overlay-tag" id="previewTag">Preview</div>
             <img id="preview" alt="Preview">
-            <video id="cameraPreview" autoplay playsinline></video>
+            <video id="cameraPreview" autoplay playsinline muted></video>
             <div id="placeholderText" class="preview-placeholder">
               No image selected yet.<br>Upload or start the camera to begin.
             </div>
@@ -509,7 +553,7 @@
     </div>
   </div>
 
-  <canvas id="cameraCanvas" style="display:none;"></canvas>
+  <canvas id="cameraCanvas"></canvas>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -518,21 +562,35 @@
     const DISEASE_API_URL = "http://localhost:8000/predict_disease";
 
     let cameraStream = null;
-    let isDark = true;
     let lastPrediction = null;
     let currentMode = "breed";
 
-    const themeToggleBtn = document.getElementById("themeToggle");
-    themeToggleBtn.addEventListener("click", () => {
-      isDark = !isDark;
-      if (isDark) {
-        document.body.classList.remove("light");
-        themeToggleBtn.textContent = "🌙 Dark";
+    function handleFileSelect() {
+      const input = document.getElementById("fileInput");
+      const fileNameDisplay = document.getElementById("selectedFileName");
+      const predictBtn = document.getElementById("predictFileBtn");
+      const fileInputText = document.getElementById("fileInputText");
+      
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        fileNameDisplay.textContent = `Selected: ${file.name}`;
+        fileInputText.textContent = "Change Image";
+        predictBtn.disabled = false;
+        
+        // Preview the image
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.getElementById("preview");
+          img.src = e.target.result;
+          setPreviewMode("image");
+        };
+        reader.readAsDataURL(file);
       } else {
-        document.body.classList.add("light");
-        themeToggleBtn.textContent = "☀️ Light";
+        fileNameDisplay.textContent = "";
+        fileInputText.textContent = "Choose Image File";
+        predictBtn.disabled = true;
       }
-    });
+    }
 
     function setMode(mode) {
       currentMode = mode;
@@ -591,18 +649,25 @@
     function setLoading(isLoading) {
       const statusEl = document.getElementById("status");
       const btn = document.getElementById("predictFileBtn");
+      const fileInput = document.getElementById("fileInput");
 
       if (isLoading) {
-        statusEl.textContent = "Running prediction...";
+        statusEl.textContent = `🔄 Running ${currentMode} prediction... Please wait.`;
         statusEl.className = "status-line loading";
         if (btn) {
           btn.disabled = true;
           btn.textContent = "⏳ Predicting...";
         }
+        if (fileInput) {
+          fileInput.disabled = true;
+        }
       } else {
         if (btn) {
           btn.disabled = false;
           btn.textContent = "⚡ Predict from Image";
+        }
+        if (fileInput) {
+          fileInput.disabled = false;
         }
       }
     }
@@ -756,12 +821,17 @@
       statusEl.textContent = `File: ${data.filename}`;
       statusEl.className = "status-line";
 
+      // Store image data for PDF generation
+      const imgElement = document.getElementById("preview");
+      const imageData = imgElement.src; // This contains the base64 data URL
+
       lastPrediction = {
         filename: data.filename,
         predicted_class: data.predicted_class,
         confidence: confPercent,
         static_data: s,
-        mode: currentMode
+        mode: currentMode,
+        imageData: imageData // Store the image for PDF
       };
 
       if (pdfBtn) pdfBtn.disabled = false;
@@ -773,10 +843,32 @@
       const statusEl = document.getElementById("status");
       const pdfBtn = document.getElementById("downloadPdfBtn");
 
-      resultMain.innerHTML = `<div class="pred-meta">No valid prediction.</div>`;
-      extraInfo.innerHTML = "";
-      statusEl.textContent = message || "Prediction failed.";
-      statusEl.className = "status-line error";
+      // Parse error message for user-friendly display
+      let displayMessage = message || "Prediction failed.";
+      
+      if (message.includes("File size exceeds")) {
+        displayMessage = "❌ File too large. Please upload an image smaller than 10MB.";
+      } else if (message.includes("Invalid file type")) {
+        displayMessage = "❌ Invalid file format. Please upload a JPEG, PNG, or WebP image.";
+      } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        displayMessage = "❌ Cannot connect to server. Please ensure the backend is running on localhost:8000.";
+      } else if (message.includes("corrupted")) {
+        displayMessage = "❌ The image file appears to be corrupted. Please try a different image.";
+      } else {
+        displayMessage = `❌ Error: ${message}`;
+      }
+
+      resultMain.innerHTML = `<div class="breed-name" style="color: #fca5a5;">Prediction Failed</div>
+        <div class="pred-meta">${displayMessage}</div>`;
+      extraInfo.innerHTML = `<div class="description">
+        <strong>Troubleshooting tips:</strong><br>
+        • Ensure the backend server is running (python app.py)<br>
+        • Check that the image file is not corrupted<br>
+        • Try a different image with better quality<br>
+        • Make sure the image shows a clear view of the cattle
+      </div>`;
+      statusEl.textContent = "Ready for next prediction";
+      statusEl.className = "status-line";
 
       lastPrediction = null;
       if (pdfBtn) pdfBtn.disabled = true;
@@ -821,62 +913,116 @@
     function uploadFromFile() {
       const input = document.getElementById("fileInput");
       const file = input.files[0];
+      const statusEl = document.getElementById("status");
 
       if (!file) {
         alert("Please select an image first.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.getElementById("preview");
-        img.src = e.target.result;
-        setPreviewMode("image");
-      };
-      reader.readAsDataURL(file);
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Invalid file type. Please upload a JPEG, PNG, or WebP image.");
+        return;
+      }
+
+      // Validate file size (10MB max)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert("File too large. Please upload an image smaller than 10MB.");
+        return;
+      }
+
+      statusEl.textContent = "Starting prediction...";
+      statusEl.className = "status-line loading";
 
       predictFromFile(file);
     }
 
-    async function startCamera() {
+    async function toggleCamera() {
       const cameraStatus = document.getElementById("cameraStatus");
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Camera is not supported in this browser.");
-        return;
-      }
-
-      try {
-        if (cameraStream) return;
-
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-          audio: false
-        });
-
-        const video = document.getElementById("cameraPreview");
-        video.srcObject = cameraStream;
-        setPreviewMode("camera");
-        cameraStatus.textContent = "Camera started. Adjust the cow and click 'Capture & Predict'.";
-      } catch (err) {
-        console.error(err);
-        cameraStatus.textContent = "Failed to access camera.";
-      }
-    }
-
-    function stopCamera() {
-      const cameraStatus = document.getElementById("cameraStatus");
+      const cameraBtn = document.getElementById("cameraBtn");
+      const captureBtn = document.getElementById("captureBtn");
+      const video = document.getElementById("cameraPreview");
+      
+      // If camera is running, stop it
       if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
         cameraStream = null;
+        video.srcObject = null;
+        setPreviewMode("empty");
+        cameraStatus.textContent = "Camera stopped.";
+        cameraBtn.textContent = "📷 Start Camera";
+        captureBtn.disabled = true;
+        return;
       }
-      const video = document.getElementById("cameraPreview");
-      video.srcObject = null;
-      setPreviewMode("empty");
-      cameraStatus.textContent = "Camera is idle.";
+      
+      // Start camera
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera is not supported in this browser. Please use a modern browser or upload an image instead.");
+        return;
+      }
+
+      cameraStatus.textContent = "📸 Starting camera... Please allow camera access.";
+      cameraBtn.disabled = true;
+
+      try {
+        // Request camera with explicit constraints
+        const constraints = {
+          video: { 
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280, min: 640 }, 
+            height: { ideal: 720, min: 480 }
+          },
+          audio: false
+        };
+
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        if (cameraStream && cameraStream.active) {
+          video.srcObject = cameraStream;
+          
+          // Ensure video plays
+          await video.play().catch(e => console.warn('Video play warning:', e));
+          
+          setPreviewMode("camera");
+          cameraStatus.textContent = "✅ Camera ready. Position the cattle and click 'Capture & Predict'.";
+          cameraBtn.textContent = "⛔ Stop Camera";
+          cameraBtn.disabled = false;
+          captureBtn.disabled = false;
+        } else {
+          throw new Error('Camera stream not active');
+        }
+
+      } catch (err) {
+        console.error('Camera error:', err);
+        cameraBtn.disabled = false;
+        cameraBtn.textContent = "📷 Start Camera";
+        captureBtn.disabled = true;
+        
+        if (err.name === 'NotAllowedError') {
+          cameraStatus.textContent = "❌ Camera permission denied. Click 'Start Camera' and allow access.";
+        } else if (err.name === 'NotFoundError') {
+          cameraStatus.textContent = "❌ No camera device found on this computer.";
+        } else if (err.name === 'NotReadableError') {
+          cameraStatus.textContent = "❌ Camera is already in use by another application.";
+        } else {
+          cameraStatus.textContent = `❌ Camera error: ${err.message || 'Unknown error'}`;
+        }
+        
+        // Clean up any partial stream
+        if (cameraStream) {
+          cameraStream.getTracks().forEach(track => track.stop());
+          cameraStream = null;
+        }
+      }
     }
 
     function captureFromCamera() {
       const cameraStatus = document.getElementById("cameraStatus");
+      const cameraBtn = document.getElementById("cameraBtn");
+      const captureBtn = document.getElementById("captureBtn");
       const video = document.getElementById("cameraPreview");
 
       if (!cameraStream || !video.srcObject) {
@@ -898,6 +1044,15 @@
       img.src = dataUrl;
       setPreviewMode("image");
 
+      // Stop camera after capture
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+        video.srcObject = null;
+        cameraBtn.textContent = "📷 Start Camera";
+        captureBtn.disabled = true;
+      }
+
       canvas.toBlob(blob => {
         if (!blob) {
           cameraStatus.textContent = "Failed to capture image.";
@@ -907,7 +1062,7 @@
         predictFromFile(file);
       }, "image/jpeg", 0.95);
 
-      cameraStatus.textContent = "Image captured. Running prediction...";
+      cameraStatus.textContent = "📸 Image captured. Running prediction...";
     }
 
     function downloadPdfReport() {
@@ -918,71 +1073,246 @@
 
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
 
       const s = lastPrediction.static_data || {};
       const mode = lastPrediction.mode || "breed";
-      let y = 10;
+      const imgData = lastPrediction.imageData; // Use stored image data
+      let y = 20;
 
-      pdf.setFontSize(16);
-      pdf.text("Cattle Vision - Prediction Report", 10, y);
-      y += 10;
+      // ===== HEADER SECTION =====
+      pdf.setFillColor(30, 41, 59); // Dark background
+      pdf.rect(0, 0, pageWidth, 35, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(20);
+      pdf.setFont(undefined, 'bold');
+      pdf.text("CATTLE ANALYSIS REPORT", pageWidth / 2, 15, { align: 'center' });
+      
+      pdf.setFontSize(11);
+      pdf.setFont(undefined, 'normal');
+      const currentDate = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+      });
+      pdf.text(`Generated: ${currentDate}`, pageWidth / 2, 25, { align: 'center' });
 
-      pdf.setFontSize(12);
-      pdf.text(`Mode: ${mode === "breed" ? "Breed Classification" : "Disease Detection"}`, 10, y); y += 7;
-      pdf.text(`Filename: ${lastPrediction.filename || "N/A"}`, 10, y); y += 7;
-      pdf.text(`Predicted Class: ${lastPrediction.predicted_class}`, 10, y); y += 7;
-      pdf.text(`Confidence: ${lastPrediction.confidence}%`, 10, y); y += 10;
+      y = 45;
 
-      const addWrappedText = (title, text) => {
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const margin = 10;
-        const maxWidth = pageWidth - margin * 2;
+      // ===== IMAGE SECTION =====
+      if (imgData && imgData.startsWith('data:image')) {
+        try {
+          const imgWidth = 80;
+          const imgHeight = 60;
+          const imgX = (pageWidth - imgWidth) / 2;
+          
+          // Add border around image
+          pdf.setDrawColor(100, 116, 139);
+          pdf.setLineWidth(0.5);
+          pdf.rect(imgX - 2, y - 2, imgWidth + 4, imgHeight + 4);
+          
+          pdf.addImage(imgData, 'JPEG', imgX, y, imgWidth, imgHeight);
+          y += imgHeight + 15;
+        } catch (e) {
+          console.warn('Could not add image to PDF:', e);
+          y += 5;
+        }
+      }
+
+      // ===== PREDICTION SUMMARY BOX =====
+      pdf.setFillColor(240, 248, 255); // Light blue background
+      pdf.roundedRect(margin, y, pageWidth - margin * 2, 30, 3, 3, 'F');
+      
+      pdf.setDrawColor(59, 130, 246);
+      pdf.setLineWidth(1);
+      pdf.roundedRect(margin, y, pageWidth - margin * 2, 30, 3, 3, 'S');
+      
+      y += 8;
+      pdf.setTextColor(30, 41, 59);
+      pdf.setFontSize(14);
+      pdf.setFont(undefined, 'bold');
+      
+      if (mode === "breed") {
+        pdf.text(`Breed: ${s.breed || lastPrediction.predicted_class}`, margin + 5, y);
+      } else {
+        pdf.text(`Disease: ${s.name || lastPrediction.predicted_class}`, margin + 5, y);
+      }
+      
+      y += 7;
+      pdf.setFontSize(11);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Confidence: ${lastPrediction.confidence}%`, margin + 5, y);
+      
+      y += 6;
+      pdf.text(`Type: ${mode === "breed" ? "Breed Identification" : "Disease Detection"}`, margin + 5, y);
+      
+      y += 20;
+
+      // Helper function for section headers
+      const addSectionHeader = (title) => {
+        if (y > pageHeight - 30) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.setFillColor(59, 130, 246);
+        pdf.rect(margin, y, pageWidth - margin * 2, 8, 'F');
+        pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(12);
-        pdf.text(title, margin, y);
-        y += 6;
+        pdf.setFont(undefined, 'bold');
+        pdf.text(title, margin + 3, y + 5.5);
+        y += 12;
+        pdf.setTextColor(30, 41, 59);
+      };
+
+      // Helper function for info rows
+      const addInfoRow = (label, value, bold = false) => {
+        if (y > pageHeight - 15) {
+          pdf.addPage();
+          y = 20;
+        }
+        
+        // Label on one line
         pdf.setFontSize(11);
-        const safeText = text || "N/A";
-        const lines = pdf.splitTextToSize(safeText, maxWidth);
-        pdf.text(lines, margin, y);
-        y += lines.length * 5 + 4;
+        pdf.setFont(undefined, 'bold');
+        pdf.text(`${label}:`, margin + 5, y);
+        y += 6;
+        
+        // Value on next line, indented
+        pdf.setFont(undefined, bold ? 'bold' : 'normal');
+        const maxWidth = pageWidth - margin * 2 - 10;
+        const lines = pdf.splitTextToSize(value || "Not available", maxWidth);
+        pdf.text(lines, margin + 8, y);
+        
+        y += lines.length * 5 + 3;
+      };
+
+      // Helper function for wrapped text sections
+      const addTextSection = (text) => {
+        if (y > pageHeight - 20) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.setFont(undefined, 'normal');
+        pdf.setFontSize(10);
+        const lines = pdf.splitTextToSize(text || "Not available", pageWidth - margin * 2 - 6);
+        pdf.text(lines, margin + 3, y);
+        y += lines.length * 5 + 5;
       };
 
       if (mode === "breed") {
-        pdf.setFontSize(13);
-        pdf.text("Breed Details", 10, y); y += 7;
-        pdf.setFontSize(11);
-        pdf.text(`Breed Name: ${s.breed || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Origin: ${s.origin || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Milk Profile: ${s.milk_type || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Avg. Milk Yield: ${s.average_milk_yield || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Coat Color: ${s.primary_color || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Body Size: ${s.size || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Temperament: ${s.temperament || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Primary Use: ${s.use_case || "N/A"}`, 10, y); y += 10;
+        // ===== BREED INFORMATION =====
+        addSectionHeader("BASIC INFORMATION");
+        addInfoRow("Breed Name", s.breed || "N/A", true);
+        addInfoRow("Origin", s.origin || "N/A");
+        addInfoRow("Primary Color", s.primary_color || "N/A");
+        addInfoRow("Body Size", s.size || "N/A");
+        addInfoRow("Temperament", s.temperament || "N/A");
+        y += 3;
 
-        addWrappedText("History", s.history);
-        addWrappedText("Cross-breeding Role", s.cross_breeding);
-        addWrappedText("Future Potential", s.future_potential);
-        addWrappedText("Fun Fact", s.fun_fact);
+        // ===== MILK PRODUCTION =====
+        addSectionHeader("MILK PRODUCTION");
+        addInfoRow("Milk Type", s.milk_type || "N/A");
+        addInfoRow("Average Yield", s.average_milk_yield || "N/A", true);
+        addInfoRow("Best Use", s.use_case || "N/A");
+        y += 3;
 
-        const filename = `cattle_breed_report_${(s.breed || lastPrediction.predicted_class || "unknown").replace(/\s+/g, "_")}.pdf`;
+        // ===== BREEDING INFORMATION =====
+        addSectionHeader("BREEDING & HISTORY");
+        addTextSection(s.history);
+        pdf.setFont(undefined, 'bold');
+        pdf.setFontSize(10);
+        pdf.text("Cross-breeding Benefits:", margin + 3, y);
+        y += 5;
+        pdf.setFont(undefined, 'normal');
+        addTextSection(s.cross_breeding);
+        
+        // ===== FUTURE POTENTIAL =====
+        addSectionHeader("FUTURE POTENTIAL");
+        addTextSection(s.future_potential);
+
+        // ===== FUN FACT =====
+        if (s.fun_fact) {
+          addSectionHeader("DID YOU KNOW?");
+          addTextSection(s.fun_fact);
+        }
+
+        // ===== FOOTER =====
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text("This report is generated by Cattle Vision AI for informational purposes.", pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+        const filename = `Cattle_Breed_${(s.breed || lastPrediction.predicted_class || "Report").replace(/\s+/g, "_")}_${Date.now()}.pdf`;
         pdf.save(filename);
+
       } else {
-        pdf.setFontSize(13);
-        pdf.text("Disease Details", 10, y); y += 7;
-        pdf.setFontSize(11);
-        pdf.text(`Name: ${s.name || lastPrediction.predicted_class || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Severity: ${s.severity || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Danger Level: ${s.danger_level || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Pathogen: ${s.pathogen || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Transmission: ${s.transmission || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Prevention: ${s.prevention || "N/A"}`, 10, y); y += 6;
-        pdf.text(`Treatment: ${s.treatment || "N/A"}`, 10, y); y += 10;
+        // ===== DISEASE INFORMATION =====
+        addSectionHeader("DISEASE OVERVIEW");
+        addInfoRow("Disease Name", s.name || lastPrediction.predicted_class, true);
+        addInfoRow("Severity Level", s.severity || "N/A", true);
+        addInfoRow("Danger Level", s.danger_level || "N/A");
+        addInfoRow("Pathogen Type", s.pathogen || "N/A");
+        y += 3;
 
-        const symptoms = Array.isArray(s.symptoms) ? s.symptoms.join(", ") : s.symptoms;
-        addWrappedText("Typical Symptoms", symptoms);
+        // ===== SYMPTOMS =====
+        addSectionHeader("COMMON SYMPTOMS");
+        if (Array.isArray(s.symptoms) && s.symptoms.length > 0) {
+          pdf.setFont(undefined, 'normal');
+          pdf.setFontSize(10);
+          s.symptoms.forEach(symptom => {
+            if (y > pageHeight - 15) {
+              pdf.addPage();
+              y = 20;
+            }
+            pdf.text(`• ${symptom}`, margin + 5, y);
+            y += 5;
+          });
+          y += 3;
+        } else {
+          addTextSection("Symptoms information not available");
+        }
 
-        const filename = `cattle_disease_report_${(s.name || lastPrediction.predicted_class || "unknown").replace(/\s+/g, "_")}.pdf`;
+        // ===== TRANSMISSION =====
+        addSectionHeader("HOW IT SPREADS");
+        addInfoRow("Transmission Method", s.transmission || "N/A");
+        y += 3;
+
+        // ===== TREATMENT =====
+        addSectionHeader("TREATMENT APPROACH");
+        addTextSection(s.treatment);
+
+        // ===== PREVENTION =====
+        addSectionHeader("PREVENTION MEASURES");
+        addTextSection(s.prevention);
+
+        // ===== IMPORTANT NOTE =====
+        if (y > pageHeight - 40) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.setFillColor(255, 243, 205);
+        pdf.roundedRect(margin, y, pageWidth - margin * 2, 25, 3, 3, 'F');
+        pdf.setDrawColor(245, 158, 11);
+        pdf.setLineWidth(0.8);
+        pdf.roundedRect(margin, y, pageWidth - margin * 2, 25, 3, 3, 'S');
+        
+        y += 7;
+        pdf.setTextColor(120, 53, 15);
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'bold');
+        pdf.text("IMPORTANT:", margin + 3, y);
+        y += 5;
+        pdf.setFont(undefined, 'normal');
+        const warning = "This report is for educational purposes only. Please consult a licensed veterinarian for accurate diagnosis and treatment of your cattle.";
+        const warningLines = pdf.splitTextToSize(warning, pageWidth - margin * 2 - 6);
+        pdf.text(warningLines, margin + 3, y);
+
+        // ===== FOOTER =====
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text("Generated by Cattle Vision AI - Consult a veterinarian for professional advice", pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+        const filename = `Cattle_Disease_${(s.name || lastPrediction.predicted_class || "Report").replace(/\s+/g, "_")}_${Date.now()}.pdf`;
         pdf.save(filename);
       }
     }

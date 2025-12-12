@@ -1,0 +1,303 @@
+{
+  "Ayrshire x Ayrshire": {
+    "parents": [
+      "Ayrshire",
+      "Ayrshire"
+    ],
+    "estimated_milk_yield_l_per_year": "6300",
+    "disease_resistance": "High",
+    "calf_size": "Medium",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Ayrshire x Brown Swiss": {
+    "parents": [
+      "Ayrshire",
+      "Brown Swiss"
+    ],
+    "estimated_milk_yield_l_per_year": "7088",
+    "disease_resistance": "High",
+    "calf_size": "Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Ayrshire x Holstein": {
+    "parents": [
+      "Ayrshire",
+      "Holstein"
+    ],
+    "estimated_milk_yield_l_per_year": "7350",
+    "disease_resistance": "High",
+    "calf_size": "Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Ayrshire x Jersey": {
+    "parents": [
+      "Ayrshire",
+      "Jersey"
+    ],
+    "estimated_milk_yield_l_per_year": "5775",
+    "disease_resistance": "High",
+    "calf_size": "Medium",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Balanced dairy & small-scale",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Ayrshire x Red Dane": {
+    "parents": [
+      "Ayrshire",
+      "Red Dane"
+    ],
+    "estimated_milk_yield_l_per_year": "6615",
+    "disease_resistance": "High",
+    "calf_size": "Medium-Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Brown Swiss x Ayrshire": {
+    "parents": [
+      "Brown Swiss",
+      "Ayrshire"
+    ],
+    "estimated_milk_yield_l_per_year": "7088",
+    "disease_resistance": "High",
+    "calf_size": "Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Brown Swiss x Brown Swiss": {
+    "parents": [
+      "Brown Swiss",
+      "Brown Swiss"
+    ],
+    "estimated_milk_yield_l_per_year": "7875",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Brown Swiss x Holstein": {
+    "parents": [
+      "Brown Swiss",
+      "Holstein"
+    ],
+    "estimated_milk_yield_l_per_year": "8925",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Brown Swiss x Jersey": {
+    "parents": [
+      "Brown Swiss",
+      "Jersey"
+    ],
+    "estimated_milk_yield_l_per_year": "6413",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Brown Swiss x Red Dane": {
+    "parents": [
+      "Brown Swiss",
+      "Red Dane"
+    ],
+    "estimated_milk_yield_l_per_year": "8081",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Holstein x Ayrshire": {
+    "parents": [
+      "Holstein",
+      "Ayrshire"
+    ],
+    "estimated_milk_yield_l_per_year": "7350",
+    "disease_resistance": "High",
+    "calf_size": "Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Holstein x Brown Swiss": {
+    "parents": [
+      "Holstein",
+      "Brown Swiss"
+    ],
+    "estimated_milk_yield_l_per_year": "8925",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Holstein x Holstein": {
+    "parents": [
+      "Holstein",
+      "Holstein"
+    ],
+    "estimated_milk_yield_l_per_year": "10500",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Holstein x Jersey": {
+    "parents": [
+      "Holstein",
+      "Jersey"
+    ],
+    "estimated_milk_yield_l_per_year": "7875",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Holstein x Red Dane": {
+    "parents": [
+      "Holstein",
+      "Red Dane"
+    ],
+    "estimated_milk_yield_l_per_year": "8925",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Jersey x Ayrshire": {
+    "parents": [
+      "Jersey",
+      "Ayrshire"
+    ],
+    "estimated_milk_yield_l_per_year": "5775",
+    "disease_resistance": "High",
+    "calf_size": "Medium",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Balanced dairy & small-scale",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Jersey x Brown Swiss": {
+    "parents": [
+      "Jersey",
+      "Brown Swiss"
+    ],
+    "estimated_milk_yield_l_per_year": "6413",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Jersey x Holstein": {
+    "parents": [
+      "Jersey",
+      "Holstein"
+    ],
+    "estimated_milk_yield_l_per_year": "7875",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Jersey x Jersey": {
+    "parents": [
+      "Jersey",
+      "Jersey"
+    ],
+    "estimated_milk_yield_l_per_year": "5250",
+    "disease_resistance": "Medium",
+    "calf_size": "Small",
+    "calf_temperament": "Alert & Adaptable",
+    "recommended_use_case": "Balanced dairy & small-scale",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Jersey x Red Dane": {
+    "parents": [
+      "Jersey",
+      "Red Dane"
+    ],
+    "estimated_milk_yield_l_per_year": "6615",
+    "disease_resistance": "High",
+    "calf_size": "Medium-Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Red Dane x Ayrshire": {
+    "parents": [
+      "Red Dane",
+      "Ayrshire"
+    ],
+    "estimated_milk_yield_l_per_year": "6615",
+    "disease_resistance": "High",
+    "calf_size": "Medium-Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Red Dane x Brown Swiss": {
+    "parents": [
+      "Red Dane",
+      "Brown Swiss"
+    ],
+    "estimated_milk_yield_l_per_year": "8081",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Red Dane x Holstein": {
+    "parents": [
+      "Red Dane",
+      "Holstein"
+    ],
+    "estimated_milk_yield_l_per_year": "8925",
+    "disease_resistance": "Medium",
+    "calf_size": "Large",
+    "calf_temperament": "Calm",
+    "recommended_use_case": "High-production dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Red Dane x Jersey": {
+    "parents": [
+      "Red Dane",
+      "Jersey"
+    ],
+    "estimated_milk_yield_l_per_year": "6615",
+    "disease_resistance": "High",
+    "calf_size": "Medium-Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  },
+  "Red Dane x Red Dane": {
+    "parents": [
+      "Red Dane",
+      "Red Dane"
+    ],
+    "estimated_milk_yield_l_per_year": "7350",
+    "disease_resistance": "High",
+    "calf_size": "Medium-Large",
+    "calf_temperament": "Hardy & Robust",
+    "recommended_use_case": "Cheese & dairy",
+    "notes": "Estimation based on breed averages; real results depend on genetics & management."
+  }
+}
+
