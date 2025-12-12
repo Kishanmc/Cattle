@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cattle Breed & Disease Classifier</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top left, #38bdf8 0, transparent 50%),
+        radial-gradient(circle at bottom right, #22c55e 0, #020617 60%);
+      color: #e5e7eb;
+      padding: 24px;
+      transition: background 0.4s ease, color 0.3s ease;
+    }
+
+    body.light {
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 50%),
+        radial-gradient(circle at bottom right, #bbf7d0 0, #0f172a 60%);
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1050px;
+      backdrop-filter: blur(24px);
+      background: rgba(15, 23, 42, 0.82);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow:
+        0 30px 80px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.4);
+      padding: 20px 22px 24px;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .title-block { display: flex; flex-direction: column; gap: 4px; }
+
+    .app-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .app-subtitle { font-size: 13px; color: #9ca3af; }
+
+    .header-right { display: flex; align-items: center; gap: 8px; }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 6px 12px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.9));
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .theme-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 6px 12px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(30, 64, 175, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.35), transparent 60%);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 14px 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 30%);
+      pointer-events: none;
+    }
+
+    .card-inner { position: relative; z-index: 1; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .input-group {
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.8);
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .input-label { font-size: 12px; color: #e5e7eb; }
+
+    #fileInput { font-size: 12px; color: #e5e7eb; }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #f9fafb;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+    }
+
+    .btn.secondary {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      box-shadow: none;
+      color: #e5e7eb;
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn:hover:not([disabled]) {
+      transform: translateY(-1px) translateZ(0);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.65);
+    }
+
+    .btn.secondary:hover:not([disabled]) {
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.85);
+    }
+
+    .btn:active:not([disabled]) {
+      transform: translateY(0);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+    }
+
+    .preview-shell {
+      margin-top: 10px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #020617, #020617);
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      position: relative;
+      min-height: 230px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #preview {
+      max-width: 100%;
+      max-height: 360px;
+      display: none;
+      object-fit: contain;
+    }
+
+    #cameraPreview {
+      max-width: 100%;
+      max-height: 360px;
+      display: none;
+      object-fit: cover;
+    }
+
+    .preview-placeholder { font-size: 13px; color: #6b7280; text-align: center; }
+
+    .preview-overlay-tag {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: rgba(15, 23, 42, 0.75);
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+    }
+
+    .camera-status { font-size: 11px; color: #9ca3af; margin-top: 6px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+    }
+
+    .breed-name { font-size: 22px; font-weight: 700; color: #f9fafb; }
+
+    .pred-meta { margin-top: 4px; font-size: 13px; color: #9ca3af; }
+
+    .confidence { font-weight: 600; color: #f97316; }
+
+    .info-section {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .info-section { grid-template-columns: 1fr; }
+    }
+
+    .info-block {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(30, 64, 175, 0.7);
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 2px;
+    }
+
+    .info-value { font-size: 13px; color: #e5e7eb; }
+
+    .description {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 13px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 13px;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .description-para-title {
+      font-weight: 600;
+      color: #bfdbfe;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .fun-fact { margin-top: 8px; font-size: 12px; color: #93c5fd; }
+
+    .status-line {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .status-line.error { color: #fca5a5; }
+    .status-line.loading { color: #93c5fd; }
+
+    .history {
+      margin-top: 10px;
+      border-top: 1px dashed rgba(148, 163, 184, 0.6);
+      padding-top: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .history-title {
+      font-size: 11px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b7280;
+    }
+
+    .history-item { font-size: 11px; color: #9ca3af; }
+    .history-item span { color: #e5e7eb; }
+
+    .about {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 12px;
+      color: #cbd5f5;
+    }
+
+    .about-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    .about-highlight { color: #bfdbfe; font-weight: 600; }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 6px 12px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip.active {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: rgba(74, 222, 128, 0.9);
+      color: #022c22;
+      box-shadow: 0 10px 22px rgba(34, 197, 94, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="header">
+      <div class="title-block">
+        <div class="app-title">Cattle Vision</div>
+        <div class="app-subtitle">AI-powered cattle breed and disease classifier with rich insights.</div>
+      </div>
+      <div class="header-right">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>Model online · Localhost:8000</span>
+        </div>
+        <button id="themeToggle" class="theme-toggle">🌙 Dark</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: INPUT -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-label">Input</div>
+
+          <div class="input-group">
+            <div class="input-label">Upload an image from your device</div>
+            <input type="file" id="fileInput" accept="image/*">
+            <div class="btn-row">
+              <button class="btn" id="predictFileBtn" onclick="uploadFromFile()">
+                ⚡ Predict from Image
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">Or use your camera</div>
+            <div class="btn-row">
+              <button class="btn secondary" onclick="startCamera()">📷 Start Camera</button>
+              <button class="btn" onclick="captureFromCamera()">🎯 Capture &amp; Predict</button>
+              <button class="btn secondary" onclick="stopCamera()">⛔ Stop</button>
+            </div>
+            <div id="cameraStatus" class="camera-status">Camera is idle.</div>
+          </div>
+
+          <div class="preview-shell">
+            <div class="preview-overlay-tag" id="previewTag">Preview</div>
+            <img id="preview" alt="Preview">
+            <video id="cameraPreview" autoplay playsinline></video>
+            <div id="placeholderText" class="preview-placeholder">
+              No image selected yet.<br>Upload or start the camera to begin.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREDICTION -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-label">Prediction</div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span id="badgeText">Model Status: Breed model ready</span>
+          </div>
+
+          <div class="actions-row">
+            <div class="mode-toggle">
+              <button class="chip active" id="modeBreedBtn" onclick="setMode('breed')">
+                🐄 Breed mode
+              </button>
+              <button class="chip" id="modeDiseaseBtn" onclick="setMode('disease')">
+                🩺 Disease mode
+              </button>
+            </div>
+            <button class="btn secondary" id="downloadPdfBtn" onclick="downloadPdfReport()" disabled>
+              📄 Download PDF report
+            </button>
+          </div>
+
+          <div id="resultMain">
+            <div class="pred-meta">Prediction result will appear here after you submit an image.</div>
+          </div>
+
+          <div id="extraInfo"></div>
+
+          <div id="status" class="status-line"></div>
+
+          <div class="history">
+            <div class="history-title">Recent Predictions</div>
+            <div id="historyList"></div>
+          </div>
+
+          <div class="about">
+            <div class="about-title">About this model</div>
+            <div id="aboutBody">
+              This prototype uses a deep CNN-based pipeline. In
+              <span class="about-highlight">Breed mode</span>, it uses an EfficientNet-style backbone trained on
+              Ayrshire, Brown Swiss, Holstein, Jersey, and Red Dane.
+              In <span class="about-highlight">Disease mode</span>, it uses a TensorFlow CNN trained to detect
+              Foot-and-Mouth Disease (FMD), Pinkeye (IBK), and Lumpy Skin Disease (LSD).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="cameraCanvas" style="display:none;"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    const BREED_API_URL = "http://localhost:8000/predict_breed";
+    const DISEASE_API_URL = "http://localhost:8000/predict_disease";
+
+    let cameraStream = null;
+    let isDark = true;
+    let lastPrediction = null;
+    let currentMode = "breed";
+
+    const themeToggleBtn = document.getElementById("themeToggle");
+    themeToggleBtn.addEventListener("click", () => {
+      isDark = !isDark;
+      if (isDark) {
+        document.body.classList.remove("light");
+        themeToggleBtn.textContent = "🌙 Dark";
+      } else {
+        document.body.classList.add("light");
+        themeToggleBtn.textContent = "☀️ Light";
+      }
+    });
+
+    function setMode(mode) {
+      currentMode = mode;
+
+      const breedBtn = document.getElementById("modeBreedBtn");
+      const diseaseBtn = document.getElementById("modeDiseaseBtn");
+      const badgeText = document.getElementById("badgeText");
+      const aboutBody = document.getElementById("aboutBody");
+
+      if (mode === "breed") {
+        breedBtn.classList.add("active");
+        diseaseBtn.classList.remove("active");
+        badgeText.textContent = "Model Status: Breed model ready";
+        aboutBody.innerHTML =
+          'In <span class="about-highlight">Breed mode</span>, the system uses an EfficientNet-style backbone trained on ' +
+          'Ayrshire, Brown Swiss, Holstein, Jersey, and Red Dane to estimate breed and typical dairy traits. ' +
+          'Switch to <span class="about-highlight">Disease mode</span> to inspect FMD, IBK, and LSD indicators.';
+      } else {
+        diseaseBtn.classList.add("active");
+        breedBtn.classList.remove("active");
+        badgeText.textContent = "Model Status: Disease model ready";
+        aboutBody.innerHTML =
+          'In <span class="about-highlight">Disease mode</span>, a TensorFlow CNN screens cattle images for three key diseases: ' +
+          'Foot-and-Mouth Disease (FMD), Pinkeye (IBK), and Lumpy Skin Disease (LSD). ' +
+          'Switch back to <span class="about-highlight">Breed mode</span> to classify dairy breeds.';
+      }
+
+      const statusEl = document.getElementById("status");
+      statusEl.textContent = "";
+    }
+
+    function setPreviewMode(mode) {
+      const img = document.getElementById("preview");
+      const video = document.getElementById("cameraPreview");
+      const placeholder = document.getElementById("placeholderText");
+      const tag = document.getElementById("previewTag");
+
+      if (mode === "image") {
+        img.style.display = "block";
+        video.style.display = "none";
+        placeholder.style.display = "none";
+        tag.textContent = "Uploaded Image";
+      } else if (mode === "camera") {
+        img.style.display = "none";
+        video.style.display = "block";
+        placeholder.style.display = "none";
+        tag.textContent = "Live Camera";
+      } else {
+        img.style.display = "none";
+        video.style.display = "none";
+        placeholder.style.display = "block";
+        tag.textContent = "Preview";
+      }
+    }
+
+    function setLoading(isLoading) {
+      const statusEl = document.getElementById("status");
+      const btn = document.getElementById("predictFileBtn");
+
+      if (isLoading) {
+        statusEl.textContent = "Running prediction...";
+        statusEl.className = "status-line loading";
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "⏳ Predicting...";
+        }
+      } else {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "⚡ Predict from Image";
+        }
+      }
+    }
+
+    function updateHistory(label, confPercent) {
+      const list = document.getElementById("historyList");
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement("div");
+      entry.className = "history-item";
+      entry.innerHTML = `<span>${time}</span> – [${currentMode}] ${label} (${confPercent}%)`;
+      list.prepend(entry);
+    }
+
+    function renderPrediction(data) {
+      const resultMain = document.getElementById("resultMain");
+      const extraInfo = document.getElementById("extraInfo");
+      const statusEl = document.getElementById("status");
+      const pdfBtn = document.getElementById("downloadPdfBtn");
+
+      const confPercent = (data.confidence * 100).toFixed(2);
+      const s = data.static_data || {};
+      const isDisease = currentMode === "disease";
+
+      if (!isDisease) {
+        const breedDisplay = s.breed || data.predicted_class || "Unknown breed";
+        const origin = s.origin || "Not available";
+        const milkType = s.milk_type || "Not available";
+        const avgYield = s.average_milk_yield || "Not available";
+        const color = s.primary_color || "Not available";
+        const size = s.size || "Not available";
+        const temperament = s.temperament || "Not available";
+        const useCase = s.use_case || "Not specified";
+        const funFact = s.fun_fact || "";
+        const historyText = s.history || "Not available";
+        const crossBreeding = s.cross_breeding || "Not available";
+        const futurePotential = s.future_potential || "Not available";
+
+        resultMain.innerHTML = `
+          <div class="breed-name">${breedDisplay}</div>
+          <div class="pred-meta">
+            Mode: Breed · Model prediction:
+            <span class="confidence">${data.predicted_class}</span>
+            &nbsp;•&nbsp; Confidence: <span class="confidence">${confPercent}%</span>
+          </div>
+        `;
+
+        extraInfo.innerHTML = `
+          <div class="info-section">
+            <div class="info-block">
+              <div class="info-label">Origin</div>
+              <div class="info-value">${origin}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Milk Profile</div>
+              <div class="info-value">${milkType}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Avg. Milk Yield</div>
+              <div class="info-value">${avgYield}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Coat Color</div>
+              <div class="info-value">${color}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Body Size</div>
+              <div class="info-value">${size}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Temperament</div>
+              <div class="info-value">${temperament}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Primary Use</div>
+              <div class="info-value">${useCase}</div>
+            </div>
+          </div>
+          <div class="description">
+            <div>
+              This information provides a quick overview of the predicted breed, helping farmers, vets, and students understand the typical traits and dairy potential.
+            </div>
+            ${funFact ? `<div class="fun-fact">Fun fact: ${funFact}</div>` : ""}
+            <div class="description-para-title">History</div>
+            <div>${historyText}</div>
+            <div class="description-para-title">Cross-breeding role</div>
+            <div>${crossBreeding}</div>
+            <div class="description-para-title">Future potential</div>
+            <div>${futurePotential}</div>
+          </div>
+        `;
+        updateHistory(breedDisplay, confPercent);
+      } else {
+        const name = s.name || data.predicted_class || "Unknown disease";
+        const severity = s.severity || "Not available";
+        const pathogen = s.pathogen || "Not available";
+        const transmission = s.transmission || "Not available";
+        const treatment = s.treatment || "Not available";
+        const prevention = s.prevention || "Not available";
+        const danger = s.danger_level || "Not available";
+        const symptoms = Array.isArray(s.symptoms) ? s.symptoms : [];
+
+        resultMain.innerHTML = `
+          <div class="breed-name">${name}</div>
+          <div class="pred-meta">
+            Mode: Disease · Model prediction:
+            <span class="confidence">${data.predicted_class}</span>
+            &nbsp;•&nbsp; Confidence: <span class="confidence">${confPercent}%</span>
+          </div>
+        `;
+
+        const symText = symptoms.length ? symptoms.map(x => "• " + x).join("\n") : "Not available";
+
+        extraInfo.innerHTML = `
+          <div class="info-section">
+            <div class="info-block">
+              <div class="info-label">Severity</div>
+              <div class="info-value">${severity}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Danger Level</div>
+              <div class="info-value">${danger}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Pathogen</div>
+              <div class="info-value">${pathogen}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Transmission</div>
+              <div class="info-value">${transmission}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Prevention</div>
+              <div class="info-value">${prevention}</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Treatment</div>
+              <div class="info-value">${treatment}</div>
+            </div>
+          </div>
+          <div class="description">
+            <div>
+              This section summarizes the detected disease profile. It is only for educational and triage support and cannot replace a licensed veterinarian's diagnosis.
+            </div>
+            <div class="description-para-title">Typical Symptoms</div>
+            <div style="white-space: pre-line;">${symText}</div>
+          </div>
+        `;
+        updateHistory(name, confPercent);
+      }
+
+      statusEl.textContent = `File: ${data.filename}`;
+      statusEl.className = "status-line";
+
+      lastPrediction = {
+        filename: data.filename,
+        predicted_class: data.predicted_class,
+        confidence: confPercent,
+        static_data: s,
+        mode: currentMode
+      };
+
+      if (pdfBtn) pdfBtn.disabled = false;
+    }
+
+    function handleErrorMessage(message) {
+      const resultMain = document.getElementById("resultMain");
+      const extraInfo = document.getElementById("extraInfo");
+      const statusEl = document.getElementById("status");
+      const pdfBtn = document.getElementById("downloadPdfBtn");
+
+      resultMain.innerHTML = `<div class="pred-meta">No valid prediction.</div>`;
+      extraInfo.innerHTML = "";
+      statusEl.textContent = message || "Prediction failed.";
+      statusEl.className = "status-line error";
+
+      lastPrediction = null;
+      if (pdfBtn) pdfBtn.disabled = true;
+    }
+
+    function getApiUrl() {
+      return currentMode === "breed" ? BREED_API_URL : DISEASE_API_URL;
+    }
+
+    function predictFromFile(file) {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      return fetch(getApiUrl(), {
+        method: "POST",
+        body: formData
+      })
+        .then(async res => {
+          const data = await res.json();
+          if (!res.ok) {
+            const detail = typeof data.detail === "string"
+              ? data.detail
+              : JSON.stringify(data.detail);
+            throw new Error(detail);
+          }
+          return data;
+        })
+        .then(data => {
+          renderPrediction(data);
+        })
+        .catch(err => {
+          console.error(err);
+          handleErrorMessage(err.message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    function uploadFromFile() {
+      const input = document.getElementById("fileInput");
+      const file = input.files[0];
+
+      if (!file) {
+        alert("Please select an image first.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.getElementById("preview");
+        img.src = e.target.result;
+        setPreviewMode("image");
+      };
+      reader.readAsDataURL(file);
+
+      predictFromFile(file);
+    }
+
+    async function startCamera() {
+      const cameraStatus = document.getElementById("cameraStatus");
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera is not supported in this browser.");
+        return;
+      }
+
+      try {
+        if (cameraStream) return;
+
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+          audio: false
+        });
+
+        const video = document.getElementById("cameraPreview");
+        video.srcObject = cameraStream;
+        setPreviewMode("camera");
+        cameraStatus.textContent = "Camera started. Adjust the cow and click 'Capture & Predict'.";
+      } catch (err) {
+        console.error(err);
+        cameraStatus.textContent = "Failed to access camera.";
+      }
+    }
+
+    function stopCamera() {
+      const cameraStatus = document.getElementById("cameraStatus");
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      const video = document.getElementById("cameraPreview");
+      video.srcObject = null;
+      setPreviewMode("empty");
+      cameraStatus.textContent = "Camera is idle.";
+    }
+
+    function captureFromCamera() {
+      const cameraStatus = document.getElementById("cameraStatus");
+      const video = document.getElementById("cameraPreview");
+
+      if (!cameraStream || !video.srcObject) {
+        alert("Start the camera first.");
+        return;
+      }
+
+      const canvas = document.getElementById("cameraCanvas");
+      const width = video.videoWidth || 640;
+      const height = video.videoHeight || 480;
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL("image/jpeg");
+      const img = document.getElementById("preview");
+      img.src = dataUrl;
+      setPreviewMode("image");
+
+      canvas.toBlob(blob => {
+        if (!blob) {
+          cameraStatus.textContent = "Failed to capture image.";
+          return;
+        }
+        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+        predictFromFile(file);
+      }, "image/jpeg", 0.95);
+
+      cameraStatus.textContent = "Image captured. Running prediction...";
+    }
+
+    function downloadPdfReport() {
+      if (!lastPrediction) {
+        alert("No prediction available.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+
+      const s = lastPrediction.static_data || {};
+      const mode = lastPrediction.mode || "breed";
+      let y = 10;
+
+      pdf.setFontSize(16);
+      pdf.text("Cattle Vision - Prediction Report", 10, y);
+      y += 10;
+
+      pdf.setFontSize(12);
+      pdf.text(`Mode: ${mode === "breed" ? "Breed Classification" : "Disease Detection"}`, 10, y); y += 7;
+      pdf.text(`Filename: ${lastPrediction.filename || "N/A"}`, 10, y); y += 7;
+      pdf.text(`Predicted Class: ${lastPrediction.predicted_class}`, 10, y); y += 7;
+      pdf.text(`Confidence: ${lastPrediction.confidence}%`, 10, y); y += 10;
+
+      const addWrappedText = (title, text) => {
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        const maxWidth = pageWidth - margin * 2;
+        pdf.setFontSize(12);
+        pdf.text(title, margin, y);
+        y += 6;
+        pdf.setFontSize(11);
+        const safeText = text || "N/A";
+        const lines = pdf.splitTextToSize(safeText, maxWidth);
+        pdf.text(lines, margin, y);
+        y += lines.length * 5 + 4;
+      };
+
+      if (mode === "breed") {
+        pdf.setFontSize(13);
+        pdf.text("Breed Details", 10, y); y += 7;
+        pdf.setFontSize(11);
+        pdf.text(`Breed Name: ${s.breed || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Origin: ${s.origin || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Milk Profile: ${s.milk_type || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Avg. Milk Yield: ${s.average_milk_yield || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Coat Color: ${s.primary_color || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Body Size: ${s.size || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Temperament: ${s.temperament || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Primary Use: ${s.use_case || "N/A"}`, 10, y); y += 10;
+
+        addWrappedText("History", s.history);
+        addWrappedText("Cross-breeding Role", s.cross_breeding);
+        addWrappedText("Future Potential", s.future_potential);
+        addWrappedText("Fun Fact", s.fun_fact);
+
+        const filename = `cattle_breed_report_${(s.breed || lastPrediction.predicted_class || "unknown").replace(/\s+/g, "_")}.pdf`;
+        pdf.save(filename);
+      } else {
+        pdf.setFontSize(13);
+        pdf.text("Disease Details", 10, y); y += 7;
+        pdf.setFontSize(11);
+        pdf.text(`Name: ${s.name || lastPrediction.predicted_class || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Severity: ${s.severity || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Danger Level: ${s.danger_level || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Pathogen: ${s.pathogen || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Transmission: ${s.transmission || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Prevention: ${s.prevention || "N/A"}`, 10, y); y += 6;
+        pdf.text(`Treatment: ${s.treatment || "N/A"}`, 10, y); y += 10;
+
+        const symptoms = Array.isArray(s.symptoms) ? s.symptoms.join(", ") : s.symptoms;
+        addWrappedText("Typical Symptoms", symptoms);
+
+        const filename = `cattle_disease_report_${(s.name || lastPrediction.predicted_class || "unknown").replace(/\s+/g, "_")}.pdf`;
+        pdf.save(filename);
+      }
+    }
+
+    setMode("breed");
+  </script>
+</body>
+</html>
