@@ -482,6 +482,16 @@
             </div>
           </div>
 
+          <div class="input-group" id="crossbreedInputs" style="display:none;">
+            <div class="input-label">Upload Parent A & Parent B images</div>
+          
+            <input type="file" id="parentA" accept="image/*">
+            <input type="file" id="parentB" accept="image/*">
+          
+            <button class="btn" onclick="predictCrossbreed()">🧬 Predict Crossbreed</button>
+          </div>
+          
+
           <div class="input-group">
             <div class="input-label">Or use your camera</div>
             <div class="btn-row">
@@ -513,13 +523,11 @@
 
           <div class="actions-row">
             <div class="mode-toggle">
-              <button class="chip active" id="modeBreedBtn" onclick="setMode('breed')">
-                🐄 Breed mode
-              </button>
-              <button class="chip" id="modeDiseaseBtn" onclick="setMode('disease')">
-                🩺 Disease mode
-              </button>
+              <button class="chip active" id="modeBreedBtn" onclick="setMode('breed')">🐄 Breed</button>
+              <button class="chip" id="modeDiseaseBtn" onclick="setMode('disease')">🩺 Disease</button>
+              <button class="chip" id="modeCrossBtn" onclick="setMode('crossbreed')">🧬 Crossbreed</button>
             </div>
+            
             <button class="btn secondary" id="downloadPdfBtn" onclick="downloadPdfReport()" disabled>
               📄 Download PDF report
             </button>
@@ -560,6 +568,8 @@
   <script>
     const BREED_API_URL = "http://localhost:8000/predict_breed";
     const DISEASE_API_URL = "http://localhost:8000/predict_disease";
+    const CROSSBREED_API_URL = "http://localhost:8000/predict_crossbreed";
+
 
     let cameraStream = null;
     let lastPrediction = null;
@@ -599,6 +609,9 @@
       const diseaseBtn = document.getElementById("modeDiseaseBtn");
       const badgeText = document.getElementById("badgeText");
       const aboutBody = document.getElementById("aboutBody");
+      document.getElementById("crossbreedInputs").style.display =
+  mode === "crossbreed" ? "block" : "none";
+
 
       if (mode === "breed") {
         breedBtn.classList.add("active");
@@ -608,7 +621,7 @@
           'In <span class="about-highlight">Breed mode</span>, the system uses an EfficientNet-style backbone trained on ' +
           'Ayrshire, Brown Swiss, Holstein, Jersey, and Red Dane to estimate breed and typical dairy traits. ' +
           'Switch to <span class="about-highlight">Disease mode</span> to inspect FMD, IBK, and LSD indicators.';
-      } else {
+      } else if (mode === "disease") {
         diseaseBtn.classList.add("active");
         breedBtn.classList.remove("active");
         badgeText.textContent = "Model Status: Disease model ready";
@@ -616,11 +629,40 @@
           'In <span class="about-highlight">Disease mode</span>, a TensorFlow CNN screens cattle images for three key diseases: ' +
           'Foot-and-Mouth Disease (FMD), Pinkeye (IBK), and Lumpy Skin Disease (LSD). ' +
           'Switch back to <span class="about-highlight">Breed mode</span> to classify dairy breeds.';
+      } else {
+        document.getElementById("modeCrossBtn").classList.add("active");
+  document.getElementById("modeBreedBtn").classList.remove("active");
+  document.getElementById("modeDiseaseBtn").classList.remove("active");
+
+  document.getElementById("badgeText").textContent =
+    "Model Status: Crossbreed analysis ready";
       }
 
       const statusEl = document.getElementById("status");
       statusEl.textContent = "";
     }
+
+    function predictCrossbreed() {
+  const a = document.getElementById("parentA").files[0];
+  const b = document.getElementById("parentB").files[0];
+
+  if (!a || !b) {
+    alert("Upload both Parent A and Parent B images");
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append("parent_a", a);
+  fd.append("parent_b", b);
+
+  fetch(CROSSBREED_API_URL, {
+    method: "POST",
+    body: fd
+  })
+    .then(res => res.json())
+    .then(data => renderCrossbreed(data))
+    .catch(err => alert("Crossbreed prediction failed"));
+}
 
     function setPreviewMode(mode) {
       const img = document.getElementById("preview");
@@ -836,6 +878,41 @@
 
       if (pdfBtn) pdfBtn.disabled = false;
     }
+    function renderCrossbreed(data) {
+  const c = data.crossbreed;
+
+  document.getElementById("resultMain").innerHTML = `
+    <div class="breed-name">${c.cross_name}</div>
+    <div class="pred-meta">Predicted hybrid characteristics</div>
+  `;
+
+  document.getElementById("extraInfo").innerHTML = `
+    <div class="info-section">
+      <div class="info-block">
+        <div class="info-label">Milk Type</div>
+        <div class="info-value">${c.expected_milk_type}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Avg Yield</div>
+        <div class="info-value">${c.expected_average_milk_yield}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Color</div>
+        <div class="info-value">${c.expected_primary_color}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Size</div>
+        <div class="info-value">${c.expected_size}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Temperament</div>
+        <div class="info-value">${c.expected_temperament}</div>
+      </div>
+    </div>
+    <div class="description">${c.notes}</div>
+  `;
+}
+
 
     function handleErrorMessage(message) {
       const resultMain = document.getElementById("resultMain");
