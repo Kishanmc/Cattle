@@ -1,0 +1,27 @@
+# Cattle Vision AI - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Deep Learning - PyTorch (Breed Classification)
+torch==2.1.2
+torchvision==0.16.2
+
+# Deep Learning - TensorFlow (Disease Detection)
+tensorflow==2.15.0
+
+# Image Processing
+Pillow==10.2.0
+
+# Data Processing
+numpy==1.26.3
+
+# Additional utilities
+pydantic==2.5.3
+python-dotenv==1.0.0
+
+# Optional: For GPU support (CUDA-enabled systems)
+# tensorflow-gpu==2.15.0

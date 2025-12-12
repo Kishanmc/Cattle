@@ -6,19 +6,39 @@ import uvicorn
 import numpy as np
 from PIL import Image
 import io
+import logging
+from typing import Optional
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# ============================================================
+#  CONFIGURATION
+# ============================================================
+
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_IMAGE_DIMENSION = 4096  # Maximum width or height
+ALLOWED_EXTENSIONS = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
 
 # ============================================================
 #  FASTAPI INITIALIZATION
 # ============================================================
 
-app = FastAPI(title="Cattle Vision AI")
+app = FastAPI(
+    title="Cattle Vision AI",
+    version="1.0.0",
+    description="AI-powered cattle breed classification and disease detection system"
+)
 
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # In production, replace with specific origins
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
 # ============================================================
@@ -202,14 +222,76 @@ class PredictionResponse(BaseModel):
 
 
 # ============================================================
+#  IMAGE VALIDATION
+# ============================================================
+
+def validate_image_file(file: UploadFile, content: bytes) -> None:
+    """Validate uploaded image file for security and format."""
+    # Check file size
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(400, f"File size exceeds {MAX_FILE_SIZE // (1024*1024)}MB limit.")
+    
+    # Check content type
+    if file.content_type not in ALLOWED_EXTENSIONS:
+        raise HTTPException(400, f"Invalid file type. Allowed: {', '.join(ALLOWED_EXTENSIONS)}")
+    
+    # Validate it's actually an image
+    try:
+        img = Image.open(io.BytesIO(content))
+        img.verify()
+    except Exception as e:
+        raise HTTPException(400, f"Invalid or corrupted image file: {str(e)}")
+    
+    # Check image dimensions
+    img = Image.open(io.BytesIO(content))
+    width, height = img.size
+    if width > MAX_IMAGE_DIMENSION or height > MAX_IMAGE_DIMENSION:
+        raise HTTPException(400, f"Image dimensions exceed maximum of {MAX_IMAGE_DIMENSION}px.")
+
+
+# ============================================================
 #  IMAGE PREPROCESSING — DISEASE MODEL
 # ============================================================
 
 def preprocess_disease(img_bytes):
-    img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-    img = img.resize((H, W))
-    arr = np.array(img) / 255.0
-    return np.expand_dims(arr, 0)
+    try:
+        img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        img = img.resize((H, W))
+        arr = np.array(img) / 255.0
+        return np.expand_dims(arr, 0)
+    except Exception as e:
+        logger.error(f"Disease preprocessing error: {e}")
+        raise HTTPException(500, f"Failed to preprocess image: {str(e)}")
+
+
+# ============================================================
+#  HEALTH CHECK ENDPOINTS
+# ============================================================
+
+@app.get("/")
+async def root():
+    """Root endpoint with API information."""
+    return {
+        "name": "Cattle Vision AI",
+        "version": "1.0.0",
+        "status": "online",
+        "endpoints": {
+            "breed_prediction": "/predict_breed",
+            "disease_detection": "/predict_disease",
+            "health_check": "/health"
+        }
+    }
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring."""
+    return {
+        "status": "healthy",
+        "breed_model": "loaded",
+        "disease_model": "loaded",
+        "timestamp": np.datetime64('now').astype(str)
+    }
 
 
 # ============================================================
@@ -218,17 +300,23 @@ def preprocess_disease(img_bytes):
 
 @app.post("/predict_breed", response_model=PredictionResponse)
 async def predict_breed(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(400, "File must be an image.")
-
+    """Predict cattle breed from uploaded image."""
+    logger.info(f"Breed prediction requested for file: {file.filename}")
+    
+    # Read file content
     content = await file.read()
+    
+    # Validate image
+    validate_image_file(file, content)
 
     try:
         label, conf, _ = await run_in_threadpool(
             lambda: predict_breed_bytes(breed_model, breed_device, breed_transform, content)
         )
+        logger.info(f"Breed prediction successful: {label} ({conf:.2%})")
     except Exception as e:
-        raise HTTPException(500, f"Breed prediction failed: {e}")
+        logger.error(f"Breed prediction failed: {str(e)}")
+        raise HTTPException(500, f"Breed prediction failed: {str(e)}")
 
     static = BREED_STATIC_DATA.get(label.lower(), {})
 
@@ -246,20 +334,27 @@ async def predict_breed(file: UploadFile = File(...)):
 
 @app.post("/predict_disease", response_model=PredictionResponse)
 async def predict_disease(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(400, "File must be an image.")
-
+    """Detect cattle diseases from uploaded image."""
+    logger.info(f"Disease prediction requested for file: {file.filename}")
+    
+    # Read file content
     img_bytes = await file.read()
+    
+    # Validate image
+    validate_image_file(file, img_bytes)
 
     try:
         arr = preprocess_disease(img_bytes)
-        pred = disease_model.predict(arr)[0]
+        pred = disease_model.predict(arr, verbose=0)[0]
     except Exception as e:
-        raise HTTPException(500, f"Disease prediction failed: {e}")
+        logger.error(f"Disease prediction failed: {str(e)}")
+        raise HTTPException(500, f"Disease prediction failed: {str(e)}")
 
     class_id = int(np.argmax(pred))
     label = DISEASE_CLASS_NAMES[class_id]
     conf = float(np.max(pred))
+    
+    logger.info(f"Disease prediction successful: {label} ({conf:.2%})")
 
     static = DISEASE_STATIC_DATA.get(label, {})
 
@@ -272,8 +367,36 @@ async def predict_disease(file: UploadFile = File(...)):
 
 
 # ============================================================
+#  LIFECYCLE EVENTS
+# ============================================================
+
+@app.on_event("startup")
+async def startup_event():
+    """Log startup information."""
+    logger.info("="*50)
+    logger.info("Cattle Vision AI - Starting up")
+    logger.info(f"Breed model loaded: {BREED_CHECKPOINT}")
+    logger.info(f"Disease model loaded: {DISEASE_MODEL_PATH}")
+    logger.info(f"Breed classes: {', '.join(BREED_CLASS_NAMES)}")
+    logger.info(f"Disease classes: {', '.join(DISEASE_CLASS_NAMES)}")
+    logger.info("="*50)
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Log shutdown information."""
+    logger.info("Cattle Vision AI - Shutting down")
+
+
+# ============================================================
 #  RUN SERVER
 # ============================================================
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info"
+    )
