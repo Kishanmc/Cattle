@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Query
+from fastapi import APIRouter, UploadFile, File, HTTPException
 import numpy as np
 
 from ..core.model_loader import models
@@ -10,10 +10,7 @@ from ..utils import preprocess_disease
 router = APIRouter()
 
 @router.post("/", response_model=PredictionResponse)
-async def predict_disease(
-    file: UploadFile = File(...),
-    lang: str = Query("en", description="Language code: en, hi, kn")
-):
+async def predict_disease(file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image.")
     img_bytes = await file.read()
@@ -28,17 +25,11 @@ async def predict_disease(
     class_id = int(np.argmax(pred))
     label = DISEASE_CLASS_NAMES[class_id]
     conf = float(np.max(pred))
-
-    # validate / normalize language
-    if lang not in {"en", "hi", "kn"}:
-        lang = "en"
-
-    # Static disease descriptions are currently stored as one flat English map.
     static = DISEASE_STATIC_DATA.get(label, {})
 
     return {
         "filename": file.filename,
         "predicted_class": label,
         "confidence": conf,
-        "static_data": static,   # contains summary + all fields in chosen language
+        "static_data": static
     }
